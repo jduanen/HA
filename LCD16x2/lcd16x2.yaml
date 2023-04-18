@@ -36,7 +36,7 @@ display:
     enable_pin: GPIO6
     rw_pin: GPIO7
     rs_pin: GPIO21
-    lambda: |-
+    #lambda: |-
       //it.print("Hello World!");
       // Print 0 at the top left
       //it.print("0");
@@ -53,8 +53,31 @@ display:
       // Result: "Sensor value:       42"
 
       // Print the current time
-      it.strftime("It is %H:%M on %d.%m.%Y", id(myTime).now());
+      //it.strftime("It is %H:%M on %d.%m.%Y", id(myTime).now());
       // Result for 10:06 on august 21st 2018 -> "It is 10:06 on 21.08.2018"
+    user_characters:
+      - position: 0
+        data:
+          - 0b00000
+          - 0b01010
+          - 0b00000
+          - 0b00100
+          - 0b00100
+          - 0b10001
+          - 0b01110
+          - 0b00000
+      - position: 7
+        data:
+          - 0b00000
+          - 0b01010
+          - 0b00000
+          - 0b00100
+          - 0b00100
+          - 0b00000
+          - 0b01110
+          - 0b10001
+    lambda: |-
+      it.print("Hello, world \x08 \x07!");
 
 # (Optional) For displaying time:
 time:
