@@ -77,7 +77,7 @@ display:
           - 0b01110
           - 0b10001
     lambda: |-
-      it.print("Hello, world \x08 \x07!");
+      it.print("Hello world \x08 \x07!");
 
 # (Optional) For displaying time:
 time:
