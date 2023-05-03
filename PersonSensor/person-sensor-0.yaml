@@ -1,0 +1,48 @@
+esphome:
+  name: person-sensor
+  friendly_name: Person Sensor
+  includes:
+    - person.h
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
+
+logger:
+  level: VERBOSE
+
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  ap:
+    ssid: "Person-Sensor Fallback Hotspot"
+    password: "3m8MqOrGnWbw"
+
+captive_portal:
+
+i2c:
+    sda: GPIO3  # BLU
+    scl: GPIO4  # YEL
+    scan: true
+    id: bus_a
+    frequency: 2000000.0
+
+sensor:
+  - platform: custom
+    lambda: |-
+      auto person_sensor = new PersonSensor();
+      App.register_component(person_sensor);
+      return {person_sensor};
+    sensors:
+      - name: "Person Sensor <value#1>"
+        ## unit_of_measurement: ?
+        ## accuracy_decimals: ?
