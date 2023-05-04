@@ -11,22 +11,23 @@
 #include <Goertzel.h>
 
 
+#define NUM_SIDE_TONES      4
+#define NUM_TONES           (NUM_SIDE_TONES + 1)
+
+
 class ToneDetector {
 public:
-  ToneDetector(const float frequency, const uint32_t numSideTones, const uint32_t numSamples);
+  ToneDetector(float frequency);
 
-  bool detect();
-  void setThreshold(const float threshold);
+  bool detect(int samples[], uint32_t numSamples);
+  void setThreshold(float threshold);
 
 protected:
   float _frequency;
-  uint32_t _numSideTones;
-  uint32_t _numSamples;
   float _threshold;
-  int *_samples;
 
   Goertzel *_tone;
-  Goertzel *_notTones[];
+  Goertzel *_sideTones[NUM_SIDE_TONES];
 };
 
 #include "ToneDetector.hpp"
