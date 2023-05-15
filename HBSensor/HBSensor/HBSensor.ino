@@ -8,8 +8,8 @@
  * 
  ********************************************************************************/
 
-#include <Goertzel.h>
 #include <I2S.h>
+
 #include "FS.h"
 #include "SD.h"
 #include "SPI.h"
@@ -22,21 +22,18 @@
 */
 
 
-#define SD_CS_PIN         21
+#define SD_CS_PIN           21
 
-#define I2S_SAMPLE_RATE   16000
-#define NUM_SAMPLES       (I2S_SAMPLE_RATE / 1)  // 1sec //// 10) 100msec
-#define BITS_PER_SAMPLE   16
+#define I2S_SAMPLE_RATE     16000
+#define NUM_SAMPLES         (I2S_SAMPLE_RATE / 1)  // 1sec //// 10) 100msec
+#define BITS_PER_SAMPLE     16
 
-#define BATTERY_ADC_PIN   A0
+#define BATTERY_ADC_PIN     A0
 
-//// TODO add citation
-#define TONE_FREQ         43.1    // (+/- 1.4Hz) Calypte anna
-#define TONE_GRABS        30      // set avg base on first 3sec of sound
+#define TONE_FREQ           43.1  // (+/- 1.4Hz) Calypte anna //// TODO add citation
+#define TONE_THRESHOLD      0.1   // 10% above average of adjascent tones
+#define NUM_ADJACENT_TONES  4     // two on either side
 
-#define SAMPLE_INTERVAL   1000
-
-#define TONE_THRESHOLD    0.1   // 10% above average
 
 #ifdef abs
 #undef abs
@@ -48,7 +45,7 @@ unsigned long lastSampled = 0;
 
 float toneAvg;
 
-Goertzel *ToneDetector = NULL;
+ToneDetector detector(TONE_FREQ, TONE_THRESHOLD);
 
 int samples[NUM_SAMPLES];
 
@@ -181,8 +178,8 @@ void setup() {
   while (!Serial) {;};
   Serial.println("HBSensor Starting...");
 
-  pinMode(LED_BUILTIN, OUTPUT); // USER_LED
-  pinMode(A0, INPUT);           // ADC
+  pinMode(LED_BUILTIN, OUTPUT);    // USER_LED
+  pinMode(BATTERY_ADC_PIN, INPUT); // ADC
 
   if (setupMic()) {
     Serial.println("INFO: Microphone ready");
@@ -217,6 +214,8 @@ void loop() {
   unsigned long now = millis();
 
 #ifdef BATTERY_MONITOR
+#define SAMPLE_INTERVAL     1000
+
   if (now >= (lastSampled + SAMPLE_INTERVAL)) {
     digitalWrite(LED_BUILTIN, LOW);
     Serial.println("Volts: " + String(batteryAvgVolts(), 3));
