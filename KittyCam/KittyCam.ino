@@ -13,6 +13,9 @@
 #include "SD.h"
 #include "SPI.h"
 
+#include <PIRSensor.h>
+
+
 /*
 #define CAMERA_MODEL_XIAO_ESP32S3 // Has PSRAM
 
@@ -24,10 +27,8 @@
 #define PIR_DETECT_PIN      4
 
 
-bool setupPIR() {
-  pinMode(PIR_DETECT_PIN, INPUT);
-  return(true);
-}
+PIRSensor pir(PIR_DETECT_PIN)
+
 
 bool setupSDcard(uint32_t csPin) {
   if (!SD.begin(csPin)){
@@ -101,47 +102,11 @@ void writeFile(fs::FS &fs, const char *path, uint8_t *data, size_t len){
   file.close();
 }
 
-//// TODO make this all part of the PIRSensor library
-namespace PIRSensor {
-  enum PIR_STATE {
-    UNDEF,  // undefined
-    L,      // no detection
-    L2H,    // initial detection
-    H,      // active detection
-    H2L     // no longer detected
-  };
-
-  PIR_STATE _pirVal = UNDEF;
-
-  PIR_STATE detect() {
-    int val = digitalRead(PIR_DETECT_PIN);
-
-    switch (_pirVal) {
-    case UNDEF:
-      _pirVal = val ? L : H;
-      break;
-    case H2L:
-    case L:
-      _pirVal = val ? L2H : L;
-      break;
-    case L2H:
-    case H:
-      _pirVal = val ? H : H2L;
-      break;
-    }
-    return(_pirVal);
-  }
-};
-
 void setup() {
   delay(500);
   Serial.begin(115200);
   while (!Serial) {;};
   Serial.println("KittyCam: STARTING...");
-
-  if (setupPIR()) {
-    Serial.println("PIR Detector Ready");
-  }
 
 /*
   if (setupSDcard(SD_CS_PIN)) {
@@ -165,7 +130,7 @@ void setup() {
 void loop() {
   unsigned long now = millis();
 
-  switch (PIRSensor::detect()) {
+  switch (pir.detect()) {
   case PIRSensor::L2H:
     Serial.println("Detected: " + String(now));
     break;
@@ -174,7 +139,7 @@ void loop() {
     break;
   }
 /*
-  PIRSensor::PIR_STATE val = PIRSensor::detect();
+  PIRSensor::PIR_STATE val = pir.detect();
   Serial.println(((val == PIRSensor::H) || (val == PIRSensor::L2H)) ? 1 : 0);
 */
 }
