@@ -17,14 +17,19 @@
 
 class ToneDetector {
 public:
-  ToneDetector(float frequency);
+  ToneDetector(float frequency, float minFrequency, float maxFrequency);
 
   bool detect(int samples[], uint32_t numSamples);
   void setThreshold(float threshold);
+  void printSideTones();
 
 protected:
   float _frequency;
   float _threshold;
+  float _minFreq;
+  float _maxFreq;
+
+  float _sideToneFreqs[NUM_SIDE_TONES];
 
   Goertzel *_tone;
   Goertzel *_sideTones[NUM_SIDE_TONES];

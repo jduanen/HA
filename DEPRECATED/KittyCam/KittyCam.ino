@@ -24,10 +24,15 @@
 */
 
 #define SD_CS_PIN           21
+#define LED_PIN             2
 #define PIR_DETECT_PIN      4
 
+#define TRANSITION_TEST     0
+#define LEVEL_TEST          1
+#define TEST_NUM            TRANSITION_TEST  // LEVEL_TEST
 
-PIRSensor pir(PIR_DETECT_PIN)
+
+PIRSensor pir(PIR_DETECT_PIN);
 
 
 bool setupSDcard(uint32_t csPin) {
@@ -55,11 +60,11 @@ bool setupSDcard(uint32_t csPin) {
   return(true);
 }
 
-/*
 bool setupCamera(camera_config_t *config) {
   // if PSRAM IC present, init to UXGA and higher JPEG quality
   if(config->pixel_format == PIXFORMAT_JPEG){
     if(psramFound()){
+      Serial.println("PSRAM Found"); //// TMP TMP TMP
       config->jpeg_quality = 10;
       config->fb_count = 2;
       config->grab_mode = CAMERA_GRAB_LATEST;
@@ -84,7 +89,6 @@ bool setupCamera(camera_config_t *config) {
   }
   return(true);
 }
-*/
 
 void writeFile(fs::FS &fs, const char *path, uint8_t *data, size_t len){
   Serial.printf("INFO: Writing file: %s\n", path);
@@ -108,6 +112,13 @@ void setup() {
   while (!Serial) {;};
   Serial.println("KittyCam: STARTING...");
 
+  pinMode(LED_PIN, OUTPUT);
+  digitalWrite(LED_PIN, LOW);
+  delay(1000);
+  digitalWrite(LED_PIN, HIGH);
+  delay(1000);
+  digitalWrite(LED_PIN, LOW);
+
 /*
   if (setupSDcard(SD_CS_PIN)) {
     Serial.println("INFO: SD card ready");
@@ -116,30 +127,40 @@ void setup() {
   }
 */
 
-/*
   if (setupCamera(&cameraConfig)) {
     Serial.println("Camera ready");
   } else {
     while(1) {};    //// FIXME
   }
-*/
 
   Serial.println("KittyCam: RUN");
 }
 
 void loop() {
   unsigned long now = millis();
+  PIRSensor::PIR_STATE pirState = pir.detect();
 
-  switch (pir.detect()) {
-  case PIRSensor::L2H:
-    Serial.println("Detected: " + String(now));
+  switch (TEST_NUM) {
+  case TRANSITION_TEST:
+    switch (pirState) {
+    case PIRSensor::L2H:
+      Serial.print("Detected: "); Serial.println(now);
+      digitalWrite(LED_PIN, HIGH);
+      break;
+    case PIRSensor::H2L:
+      Serial.print("No Longer Detected: "); Serial.println(now);
+      digitalWrite(LED_PIN, LOW);
+      break;
+    }
     break;
-  case PIRSensor::H2L:
-    Serial.println("No Longer Detected: " + String(now));
+  case LEVEL_TEST:
+    if (true) {
+      Serial.print(((pirState == PIRSensor::H) || (pirState == PIRSensor::L2H)) ? "^" : "v");
+      digitalWrite(LED_PIN, ((pirState == PIRSensor::H) || (pirState == PIRSensor::L2H)));
+    } else {
+      Serial.print(((pirState == PIRSensor::H) || (pirState == PIRSensor::L2H)) ? "1" : "0");
+      digitalWrite(LED_PIN, ((pirState == PIRSensor::H) || (pirState == PIRSensor::L2H)));
+    }
     break;
   }
-/*
-  PIRSensor::PIR_STATE val = pir.detect();
-  Serial.println(((val == PIRSensor::H) || (val == PIRSensor::L2H)) ? 1 : 0);
-*/
 }
