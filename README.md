@@ -1,5 +1,6 @@
 # HA
-HomeAssistant-/ESPHome-related tools, drivers, configurations, etc.
+HomeAssistant-related code
 
 
-https://github.com/usefulsensors/person_sensor_docs/blob/main/README.md
+#### Links
+  * https://github.com/usefulsensors/person_sensor_docs/blob/main/README.md
