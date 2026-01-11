@@ -34,3 +34,6 @@
 .esphome/
 secrets.yaml
 DEPRECATED
+
+# JDN Added
+*~
