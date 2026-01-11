@@ -15,10 +15,10 @@ DEF_PIPER_VOICE="en_US-lessac-medium"
   # de_DE-jonas: German, male voice
 DEF_PIPER_DATA="${HOME}/wyoming/PiperData"
 
-PIPER_EXEC=${PIPER_CPU}
-PIPER_PORT=${DEF_PIPER_PORT}
-PIPER_VOICE=${DEF_PIPER_VOICE}
-PIPER_DATA=${DEF_PIPER_DATA}
+PIPER_EXEC=$PIPER_CPU
+PIPER_PORT=$DEF_PIPER_PORT
+PIPER_VOICE=$DEF_PIPER_VOICE
+PIPER_DATA=$DEF_PIPER_DATA
 
 while getopts "n:p:d:gv" opt; do
   case "$opt" in
@@ -32,10 +32,10 @@ while getopts "n:p:d:gv" opt; do
 done
 
 if [ $VERBOSE ]; then
-   echo "PIPER_VOICE: ${PIPER_VOICE}"
-   echo "PIPER_PORT: ${PIPER_PORT}"
-   echo "PIPER_EXEC: ${PIPER_EXEC}"
-   echo "PIPER_DATA: ${PIPER_DATA}"
+   echo "PIPER_VOICE: $PIPER_VOICE"
+   echo "PIPER_PORT: $PIPER_PORT"
+   echo "PIPER_DATA: $PIPER_DATA"
+   echo "PIPER_EXEC: $PIPER_EXEC"
 fi
 
 docker run -d --name wyoming-piper \
