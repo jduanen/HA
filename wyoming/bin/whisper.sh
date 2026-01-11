@@ -31,7 +31,7 @@ while getopts "m:p:d:gv" opt; do
     d) WHISPER_DATA="$OPTARG" ;;
     g) WHISPER_EXEC="--runtime=nvidia --gpus all $WHISPER_GPU" ;;
     v) VERBOSE=1 ;;
-    *) echo "Usage: $0 {-m <modelName>} {-p <hostPortNumber>} {-g} {-v}"; exit 1 ;;
+    *) echo "Usage: $0 {-m <modelName>} {-p <hostPortNumber>} {-d <dataPath>} {-g} {-v}"; exit 1 ;;
   esac
 done
 
@@ -42,7 +42,7 @@ if [ $VERBOSE ]; then
    echo "WHISPER_EXEC: $WHISPER_EXEC"
 fi
 
-echo docker run -d --name wyoming-whisper \
+docker run -d --name wyoming-whisper \
        -p $WHISPER_PORT:10300 \
        --model $WHISPER_MODEL --language en --beam_size 5 \
        --compute_type int8 \
