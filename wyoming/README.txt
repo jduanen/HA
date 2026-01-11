@@ -21,3 +21,10 @@
     * `docker compose pull`
   - run a real-time monitor of the resource usage of the containers
     * `docker compose stats`
+
+* In HA Voice Settings, point whisper to 'spark-8d0d.lan:10300' and piper to 'spark-8d0d.lan:10200'
+
+* TODO
+  - make scripts to start/stop cpu/gpu TTS&STT services
+  - consider running both cpu and gpu services on different port to allow evaluation of the effects of acceleration
+  
